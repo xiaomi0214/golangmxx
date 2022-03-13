@@ -11,7 +11,24 @@ import (
 	"flag"
 	"github.com/golang/glog"
 	"io"
+	"github.com/prometheus/client_golang/prometheus"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
+
+var (
+	healthzCount = prometheus.NewCounterVec(prometheus.CounterOpts{
+		Namespace: "yw",
+		Subsystem: "http",
+		Name: "request_count",
+		Help: "http 服务的请求次数统计",
+	},
+	[]string{"interface"},
+	)
+)
+
+func init()  {
+	prometheus.MustRegister(healthzCount)
+}
 
 func rootHandle(w http.ResponseWriter, r *http.Request)  {
 	glog.V(2).Info(fmt.Sprintf("请求路径:[%s]  请求主机:[%s]",r.URL,r.Host))
@@ -20,6 +37,7 @@ func rootHandle(w http.ResponseWriter, r *http.Request)  {
 }
 
 func healthzHandler(w http.ResponseWriter,r *http.Request)  {
+	healthzCount.WithLabelValues("healthz").Inc()
 	io.WriteString(w,"200\n")
 }
 func testHandler(w http.ResponseWriter , r *http.Request)  {
@@ -59,6 +77,7 @@ func main()  {
 	http.HandleFunc("/",rootHandle)
 	http.HandleFunc("/healthz",healthzHandler)
 	http.HandleFunc("/test",testHandler)
+	http.Handle("/metrics",promhttp.Handler())
 
 	err := http.ListenAndServe(fmt.Sprintf(":%s",*port),nil)
 	if err != nil {
