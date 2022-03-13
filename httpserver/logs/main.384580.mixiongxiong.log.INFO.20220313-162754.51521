@@ -1,7 +1,0 @@
-Log file created at: 2022/03/13 16:27:54
-Running on machine: 384580
-Binary: Built with gc go1.17.1 for darwin/amd64
-Log line format: [IWEF]mmdd hh:mm:ss.uuuuuu threadid file:line] msg
-I0313 16:27:54.251611   51521 main.go:75] http  server  starting ......
-I0313 16:28:03.491213   51521 main.go:34] 请求路径:[/]  请求主机:[localhost:8000]
-I0313 16:28:43.073573   51521 main.go:34] 请求路径:[/]  请求主机:[localhost:8000]
